@@ -1,4 +1,4 @@
-package ru.vokazak;
+package ru.vokazak.controllers;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;

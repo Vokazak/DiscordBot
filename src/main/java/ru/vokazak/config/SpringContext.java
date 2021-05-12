@@ -3,7 +3,7 @@ package ru.vokazak.config;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
-import ru.vokazak.SpringBootExampleApplication;
+import ru.vokazak.ApplicationStarter;
 
 @Configuration
 public class SpringContext {
@@ -12,7 +12,7 @@ public class SpringContext {
     public static ApplicationContext getContext() {
         if (context == null) {
             context = new SpringApplicationBuilder()
-                    .sources(SpringBootExampleApplication.class)
+                    .sources(ApplicationStarter.class)
                     .run();
         }
         return context;

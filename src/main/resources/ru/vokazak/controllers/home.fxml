@@ -6,22 +6,22 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="mainPane" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.vokazak.MainSceneController">
+<AnchorPane fx:id="mainPane" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.vokazak.controllers.MainSceneController">
    <children>
       <VBox prefHeight="800.0" prefWidth="305.0" style="-fx-background-color: #EBE8F9;">
          <children>
             <ImageView fitHeight="133.0" fitWidth="157.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@ava.jpg" />
+                  <Image url="@../ava.jpg" />
                </image>
                <VBox.margin>
                   <Insets bottom="10.0" left="50.0" top="20.0" />
                </VBox.margin></ImageView>
-            <Button fx:id="massagePanel" alignment="BASELINE_LEFT" graphicTextGap="22.0" mnemonicParsing="false" onAction="#onMessageButtonClicked" prefHeight="70.0" prefWidth="305.0" stylesheets="@css/menuButton.css" text="Post message">
+            <Button fx:id="massagePanel" alignment="BASELINE_LEFT" graphicTextGap="22.0" mnemonicParsing="false" onAction="#onMessageButtonClicked" prefHeight="70.0" prefWidth="305.0" stylesheets="@../css/menuButton.css" text="Post message">
                <graphic>
                   <ImageView fitHeight="36.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@icons/icons8_Open_Envelope_32px.png" />
+                        <Image url="@../icons/icons8_Open_Envelope_32px.png" />
                      </image></ImageView>
                </graphic>
                <padding>
@@ -30,11 +30,11 @@
                <font>
                   <Font size="24.0" />
                </font></Button>
-            <Button alignment="BASELINE_LEFT" graphicTextGap="22.0" mnemonicParsing="false" prefHeight="70.0" prefWidth="305.0" stylesheets="@css/menuButton.css" text="Get message">
+            <Button alignment="BASELINE_LEFT" graphicTextGap="22.0" mnemonicParsing="false" prefHeight="70.0" prefWidth="305.0" stylesheets="@../css/menuButton.css" text="Get message">
                <graphic>
                   <ImageView fitHeight="34.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@icons/icons8_Box_32px.png" />
+                        <Image url="@../icons/icons8_Box_32px.png" />
                      </image></ImageView>
                </graphic>
                <padding>
@@ -43,11 +43,11 @@
                <font>
                   <Font size="24.0" />
                </font></Button>
-            <Button fx:id="musicPlayer" alignment="BASELINE_LEFT" graphicTextGap="22.0" mnemonicParsing="false" onAction="#onMusicButtonClicked" prefHeight="70.0" prefWidth="305.0" stylesheets="@css/menuButton.css" text="Music manager">
+            <Button fx:id="musicPlayer" alignment="BASELINE_LEFT" graphicTextGap="22.0" mnemonicParsing="false" onAction="#onMusicButtonClicked" prefHeight="70.0" prefWidth="305.0" stylesheets="@../css/menuButton.css" text="Music manager">
                <graphic>
                   <ImageView fitHeight="34.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@icons/icons8_Xbox_Menu_32px.png" />
+                        <Image url="@../icons/icons8_Xbox_Menu_32px.png" />
                      </image></ImageView>
                </graphic>
                <padding>
@@ -56,11 +56,11 @@
                <font>
                   <Font size="24.0" />
                </font></Button>
-            <Button fx:id="settingsPanel" alignment="BASELINE_LEFT" graphicTextGap="22.0" mnemonicParsing="false" onAction="#onSettingsButtonClicked" prefHeight="70.0" prefWidth="305.0" stylesheets="@css/menuButton.css" text="Settings">
+            <Button fx:id="settingsPanel" alignment="BASELINE_LEFT" graphicTextGap="22.0" mnemonicParsing="false" onAction="#onSettingsButtonClicked" prefHeight="70.0" prefWidth="305.0" stylesheets="@../css/menuButton.css" text="Settings">
                <graphic>
                   <ImageView fitHeight="31.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@icons/icons8_Slider__32px.png" />
+                        <Image url="@../icons/icons8_Slider__32px.png" />
                      </image></ImageView>
                </graphic>
                <padding>
@@ -69,11 +69,11 @@
                <font>
                   <Font size="24.0" />
                </font></Button>
-            <Button fx:id="hide" alignment="BASELINE_LEFT" graphicTextGap="22.0" layoutX="10.0" layoutY="532.0" mnemonicParsing="false" onAction="#onHideButtonClicked" prefHeight="70.0" prefWidth="305.0" stylesheets="@css/menuButton.css" text="Hide">
+            <Button fx:id="hide" alignment="BASELINE_LEFT" graphicTextGap="22.0" layoutX="10.0" layoutY="532.0" mnemonicParsing="false" onAction="#onHideButtonClicked" prefHeight="70.0" prefWidth="305.0" stylesheets="@../css/menuButton.css" text="Hide">
                <graphic>
                   <ImageView fitHeight="32.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" rotate="90.0">
                      <image>
-                        <Image url="@icons/icons8_Sign_Out_32px.png" />
+                        <Image url="@../icons/icons8_Sign_Out_32px.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -84,11 +84,11 @@
                   <Font size="24.0" />
                </font>
             </Button>
-            <Button fx:id="exit" alignment="BASELINE_LEFT" graphicTextGap="22.0" mnemonicParsing="false" onAction="#onExitButtonClicked" prefHeight="70.0" prefWidth="305.0" stylesheets="@css/menuButton.css" text="Exit">
+            <Button fx:id="exit" alignment="BASELINE_LEFT" graphicTextGap="22.0" mnemonicParsing="false" onAction="#onExitButtonClicked" prefHeight="70.0" prefWidth="305.0" stylesheets="@../css/menuButton.css" text="Exit">
                <graphic>
                   <ImageView fitHeight="32.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@icons/icons8_Sign_Out_32px.png" />
+                        <Image url="@../icons/icons8_Sign_Out_32px.png" />
                      </image></ImageView>
                </graphic>
                <padding>

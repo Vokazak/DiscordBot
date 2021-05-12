@@ -1,4 +1,4 @@
-package ru.vokazak;
+package ru.vokazak.controllers;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;

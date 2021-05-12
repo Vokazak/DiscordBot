@@ -7,13 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class JdaFactory {
 
+    private String token = "NzczOTU1NjcwODEzODM1MzQ2.X6QwYw.YG3KxPDfsvJoBjQDwlRayt5aQQU";
+
     private JDA jda;
-    private static final String token = "NzczOTU1NjcwODEzODM1MzQ2.X6QwYw.YG3KxPDfsvJoBjQDwlRayt5aQQU";
-
-    //private final SpringConfiguration settings;
-
-    //public JdaFactory(@Autowired SpringConfiguration settings) {this.settings = settings;}
-
     public JDA getJda() {
         if (jda == null) {
             JDABuilder jdaBuilder = JDABuilder.createDefault(token);

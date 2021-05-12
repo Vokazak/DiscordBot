@@ -7,9 +7,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import net.rgielen.fxweaver.core.FxWeaver;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
 import ru.vokazak.config.SpringContext;
+import ru.vokazak.controllers.MainSceneController;
 
 public class JavaFxApplication extends Application {
 

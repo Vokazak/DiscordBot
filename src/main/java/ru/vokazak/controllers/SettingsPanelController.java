@@ -1,4 +1,4 @@
-package ru.vokazak;
+package ru.vokazak.controllers;
 
 import javafx.fxml.Initializable;
 import net.rgielen.fxweaver.core.FxmlView;
