@@ -5,36 +5,43 @@ import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import net.rgielen.fxweaver.core.FxWeaver;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import ru.vokazak.config.SpringContext;
 
 public class JavaFxApplication extends Application {
 
-    private ConfigurableApplicationContext applicationContext;
+    private double xOffset = 0.0;
+    private double yOffset = 0.0;
 
     @Override
-    public void init() {
-        String[] args = getParameters().getRaw().toArray(new String[0]);
+    public void start(Stage stage) {
+        FxWeaver fxWeaver = SpringContext.getContext().getBean(FxWeaver.class);
+        Parent root = fxWeaver.loadView(MainSceneController.class);
 
-        this.applicationContext = new SpringApplicationBuilder()
-                .sources(SpringBootExampleApplication.class)
-                .run(args);
+        root.setOnMousePressed(event -> {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+
+        root.setOnMouseDragged(event -> {
+            stage.setX(event.getScreenX() - xOffset);
+            stage.setY(event.getScreenY() - yOffset);
+        });
+
+
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.initStyle(StageStyle.UNDECORATED);
+        stage.show();
     }
 
     @Override
     public void stop() {
-        this.applicationContext.close();
         Platform.exit();
-    }
-
-    @Override
-    public void start(Stage stage) {
-        FxWeaver fxWeaver = applicationContext.getBean(FxWeaver.class);
-        Parent root = fxWeaver.loadView(MyController.class);
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
     }
 
 }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="513.0" prefWidth="891.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.vokazak.MessagePanelController">
+   <children>
+      <ChoiceBox fx:id="channelChoiceBox" layoutX="55.0" layoutY="165.0" prefHeight="47.0" prefWidth="427.0" stylesheets="@css/choiceBox.css" />
+      <ChoiceBox fx:id="userChoiceBox" layoutX="543.0" layoutY="165.0" prefHeight="47.0" prefWidth="323.0" stylesheets="@css/choiceBox.css" />
+      <Label layoutX="166.0" layoutY="102.0" text="TextChannels">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Label>
+      <Label layoutX="661.0" layoutY="102.0" text="Users">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Label>
+      <Button fx:id="sendButton" layoutX="69.0" layoutY="301.0" mnemonicParsing="false" onMouseClicked="#onSendButtonClicked" stylesheets="@css/overviewButton.css" text="Send">
+         <font>
+            <Font size="24.0" />
+         </font></Button>
+      <Button fx:id="inviteAllButton" layoutX="697.0" layoutY="231.0" mnemonicParsing="false" onMouseClicked="#onInviteAllButtonClicked" stylesheets="@css/overviewButton.css" text="Invite all">
+         <font>
+            <Font size="24.0" />
+         </font></Button>
+      <Button fx:id="inviteUserButton" layoutX="587.0" layoutY="231.0" mnemonicParsing="false" onMouseClicked="#onInviteButtonClicked" stylesheets="@css/overviewButton.css" text="Invite">
+         <font>
+            <Font size="24.0" />
+         </font></Button>
+      <TextField fx:id="textField" layoutX="58.0" layoutY="226.0" prefHeight="51.0" prefWidth="427.0">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </TextField>
+   </children>
+</AnchorPane>
