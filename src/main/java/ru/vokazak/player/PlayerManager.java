@@ -10,10 +10,12 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class PlayerManager {
 
     private static PlayerManager playerManager;
@@ -104,10 +106,13 @@ public class PlayerManager {
         musicManager.scheduler.queue(track);
     }
 
+    /*
     public static synchronized PlayerManager getInstance() {
         if (playerManager == null) {
             playerManager = new PlayerManager();
         }
         return playerManager;
     }
+
+     */
 }

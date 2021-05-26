@@ -34,7 +34,10 @@ public class MessagePanelController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        renew();
+    }
 
+    public void renew() {
         channelChoiceBox.setItems(getChannelChoiceBoxList());
         channelChoiceBox.setValue(channelChoiceBox.getItems().get(0));
         currentChannel = jda.getTextChannels().get(0);

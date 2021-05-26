@@ -11,7 +11,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
@@ -21,6 +23,10 @@ import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import org.springframework.stereotype.Component;
+import ru.vokazak.alertWindows.MusicFolderInputDialog;
+import ru.vokazak.config.Settings;
+import ru.vokazak.exceptions.InvalidDataException;
+import ru.vokazak.exceptions.SettingsException;
 import ru.vokazak.jda.JdaFactory;
 import ru.vokazak.player.PlayerManager;
 
@@ -33,24 +39,22 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
+@RequiredArgsConstructor
 @FxmlView("musicPanel.fxml")
 public class MusicPlayerController implements Initializable {
 
-    private final JDA jda;
-
     private VoiceChannel currentVoiceChannel;
     private TextChannel currentTextChannel;
+    private JDA jda;
 
-    private static final String MUSIC_PATH = "/F:/Music/DiscordSamples/";
-
-    private final PlayerManager playerManager = PlayerManager.getInstance();
-
-    public MusicPlayerController(JdaFactory jdaFactory) {
-        this.jda = jdaFactory.getJda();
-    }
+    private final PlayerManager playerManager;
+    private final Settings settings;
+    private final JdaFactory jdaFactory;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        jda = jdaFactory.getJda();
 
         try {
             GlobalScreen.registerNativeHook();
@@ -65,20 +69,51 @@ public class MusicPlayerController implements Initializable {
         Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
         logger.setLevel(Level.OFF);
 
-        voiceChannelChoiceBox.setItems(getVoiceChannelChoiceBoxList());
+        renew();
+    }
+
+    public void renew() {
+        voiceChannelChoiceBox.setItems(getChannelChoiceBoxList(jda.getVoiceChannels()));
         voiceChannelChoiceBox.setValue(voiceChannelChoiceBox.getItems().get(0));
         currentVoiceChannel = jda.getVoiceChannels().get(0);
 
-        tracksChoiceBox.setItems(getTracksChoiceBoxList());
+        setTrackChoiceBoxValues();
+
         tracksChoiceBox.setValue(tracksChoiceBox.getItems().get(0));
 
         initMusicButtonPane();
 
-        textChannelChoiceBox.setItems(getTextChannelChoiceBoxList());
+        textChannelChoiceBox.setItems(getChannelChoiceBoxList(jda.getTextChannels()));
         textChannelChoiceBox.setValue(textChannelChoiceBox.getItems().get(0));
         currentTextChannel = jda.getTextChannels().get(0);
     }
 
+    private void setTrackChoiceBoxValues() {
+        try {
+            tracksChoiceBox.setItems(getTracksChoiceBoxList());
+        } catch (InvalidDataException e) {
+            Optional<String> result = new MusicFolderInputDialog(settings.getMusicFolder(), e).showAndWait();
+
+            if (result.isPresent()) {
+                String newPath = result.get();
+                settings.setMusicFolder(newPath);
+
+                try {
+                    settings.saveSettings();
+                } catch (SettingsException settingsException) {
+                    settingsException.printStackTrace();
+                    System.exit(-1);
+                }
+
+                setTrackChoiceBoxValues();
+            } else {
+                System.exit(-1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+    }
 
     @FXML
     private ChoiceBox<String> textChannelChoiceBox;
@@ -139,43 +174,44 @@ public class MusicPlayerController implements Initializable {
     }
 
 
-    private ObservableList<String> getVoiceChannelChoiceBoxList() {
-        List<String> voiceChannelList = new ArrayList<>();
-        for (VoiceChannel c: jda.getVoiceChannels()) {
-            String channelName = c.toString().substring(3).replaceAll("\\([0-9]*\\)", "");
-            voiceChannelList.add(channelName);
+    private<T extends  GuildChannel> ObservableList<String> getChannelChoiceBoxList(List<T> channelList) {
+        List<String> channelNamesList = new ArrayList<>();
+        for (T channel: channelList) {
+            String channelName = channel.toString().substring(3).replaceAll("\\([0-9]*\\)", "");
+            channelNamesList.add(channelName);
         }
 
-        return FXCollections.observableList(voiceChannelList);
+        return FXCollections.observableList(channelNamesList);
     }
-
-    private ObservableList<String> getTextChannelChoiceBoxList() {
-        List<String> textChannelList = new ArrayList<>();
-        for (TextChannel c: jda.getTextChannels()) {
-            String channelName = c.toString().substring(3).replaceAll("\\([0-9]*\\)", "");
-            textChannelList.add(channelName);
-        }
-
-        return FXCollections.observableList(textChannelList);
-    }
-
 
     private ObservableList<String> getTracksChoiceBoxList() {
-        return FXCollections.observableList(
-                Stream.of(new File(MUSIC_PATH).listFiles())
-                    .filter(file -> !file.isDirectory())
-                    .map(File::getName)
-                    .collect(Collectors.toList())
-                );
+        File[] files = new File(settings.getMusicFolder()).listFiles();
+        if (files == null) {
+            throw new InvalidDataException("Incorrect path to music folder");
+        }
+
+        ObservableList<String> musicList = FXCollections.observableList(
+                Stream.of(files)
+                        .filter(file ->
+                                !file.isDirectory() || file.getName().endsWith(".mp3")
+                        )
+                        .map(File::getName)
+                        .collect(Collectors.toList())
+        );
+
+        if (!musicList.isEmpty()) {
+            return musicList;
+        } else {
+            throw new InvalidDataException("Folder has no music");
+        }
+
     }
 
     private void initMusicButtonPane() {
-        int columns = musicButtonPane.getColumnCount();
-        int rows = musicButtonPane.getRowCount();
-
         int z = 1;
-        for (int i = 0; i < columns; i++) {
-            for (int j = 0; j < rows; j++) {
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
 
                 VBox gridPaneElement = new VBox();
                 gridPaneElement.setAlignment(Pos.CENTER);
@@ -198,9 +234,9 @@ public class MusicPlayerController implements Initializable {
                 gridPaneElement.getChildren().add(b);
 
                 musicButtonPane.add(gridPaneElement, j, i);
-
                 buttonMap.put(z, b);
-                z ++;
+
+                z++;
             }
         }
     }
@@ -211,7 +247,7 @@ public class MusicPlayerController implements Initializable {
             try {
                 int i = Integer.parseInt(NativeKeyEvent.getKeyText(e.getKeyCode()));
                 currentTextChannel = jda.getTextChannelsByName(textChannelChoiceBox.getValue(), true).get(0);
-                playerManager.loadAndPlay(currentTextChannel, MUSIC_PATH + buttonMap.get(i).getText());
+                playerManager.loadAndPlay(currentTextChannel, settings.getMusicFolder() + buttonMap.get(i).getText());
             } catch (NumberFormatException ignored) {}
         }
 
