@@ -12,8 +12,6 @@ public class Settings implements Serializable {
 
     private final String FILE_PATH = "settings.out";
 
-    //NzczOTU1NjcwODEzODM1MzQ2.X6QwYw.YG3KxPDfsvJoBjQDwlRayt5aQQU
-
     private String token;
     private String musicFolder;
     private String[][] keyBindArray = new String[3][3];
