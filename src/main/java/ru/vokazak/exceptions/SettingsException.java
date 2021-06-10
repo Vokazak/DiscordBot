@@ -1,6 +1,6 @@
 package ru.vokazak.exceptions;
 
-public class SettingsException extends Exception{
+public class SettingsException extends Exception {
 
     public SettingsException() {
         super();

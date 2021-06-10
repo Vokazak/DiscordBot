@@ -23,6 +23,7 @@ import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import org.springframework.stereotype.Component;
+import ru.vokazak.alertWindows.ErrorAlertWindow;
 import ru.vokazak.alertWindows.MusicFolderInputDialog;
 import ru.vokazak.config.Settings;
 import ru.vokazak.exceptions.InvalidDataException;
@@ -74,8 +75,10 @@ public class MusicPlayerController implements Initializable {
 
     public void renew() {
         voiceChannelChoiceBox.setItems(getChannelChoiceBoxList(jda.getVoiceChannels()));
-        voiceChannelChoiceBox.setValue(voiceChannelChoiceBox.getItems().get(0));
-        currentVoiceChannel = jda.getVoiceChannels().get(0);
+        //voiceChannelChoiceBox.setValue(voiceChannelChoiceBox.getItems().get(0));
+        setChannelValue(voiceChannelChoiceBox, settings.getMusicVoiceChannel());
+        //currentVoiceChannel = jda.getVoiceChannels().get(0);
+        currentVoiceChannel = jda.getVoiceChannelsByName(voiceChannelChoiceBox.getValue(), true).get(0);
 
         setTrackChoiceBoxValues();
 
@@ -84,8 +87,10 @@ public class MusicPlayerController implements Initializable {
         initMusicButtonPane();
 
         textChannelChoiceBox.setItems(getChannelChoiceBoxList(jda.getTextChannels()));
-        textChannelChoiceBox.setValue(textChannelChoiceBox.getItems().get(0));
-        currentTextChannel = jda.getTextChannels().get(0);
+        //textChannelChoiceBox.setValue(textChannelChoiceBox.getItems().get(0));
+        setChannelValue(textChannelChoiceBox, settings.getMusicTextChannel());
+        //currentTextChannel = jda.getTextChannels().get(0);
+        currentTextChannel = jda.getTextChannelsByName(textChannelChoiceBox.getValue(), true).get(0);
     }
 
     private void setTrackChoiceBoxValues() {
@@ -98,19 +103,20 @@ public class MusicPlayerController implements Initializable {
                 String newPath = result.get();
                 settings.setMusicFolder(newPath);
 
+                setTrackChoiceBoxValues();
                 try {
                     settings.saveSettings();
+
                 } catch (SettingsException settingsException) {
                     settingsException.printStackTrace();
                     System.exit(-1);
                 }
 
-                setTrackChoiceBoxValues();
             } else {
                 System.exit(-1);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            new ErrorAlertWindow(e.getMessage()).showAndWait();
             System.exit(-1);
         }
     }
@@ -140,12 +146,12 @@ public class MusicPlayerController implements Initializable {
                     .getGuild()
                     .getAudioManager();
         } catch (NullPointerException e) {
-            System.out.println("error");
+            new ErrorAlertWindow("Exception while connecting").showAndWait();
             return;
         }
 
         if (audioManager.isConnected()) {
-            System.out.println("already connected");
+            new ErrorAlertWindow("Already connected").showAndWait();
             return;
         }
         audioManager.openAudioConnection(currentVoiceChannel);
@@ -161,20 +167,24 @@ public class MusicPlayerController implements Initializable {
                     .getGuild()
                     .getAudioManager();
         } catch (NullPointerException e) {
-            System.out.println("error");
+            new ErrorAlertWindow("Exception while disconnecting").showAndWait();
             return;
         }
 
         if (!audioManager.isConnected()) {
-            System.out.println("already disconnected");
+            new ErrorAlertWindow("Already disconnected").showAndWait();
             return;
         }
 
         audioManager.closeAudioConnection();
     }
 
+    @FXML
+    private void onSkipButtonClicked() {
+        playerManager.skip(currentTextChannel);
+    }
 
-    private<T extends  GuildChannel> ObservableList<String> getChannelChoiceBoxList(List<T> channelList) {
+    private <T extends GuildChannel> ObservableList<String> getChannelChoiceBoxList(List<T> channelList) {
         List<String> channelNamesList = new ArrayList<>();
         for (T channel: channelList) {
             String channelName = channel.toString().substring(3).replaceAll("\\([0-9]*\\)", "");
@@ -182,6 +192,16 @@ public class MusicPlayerController implements Initializable {
         }
 
         return FXCollections.observableList(channelNamesList);
+    }
+
+    private void setChannelValue(ChoiceBox<String> choiceBox, String settingsValue) {
+        for (String item : choiceBox.getItems()) {
+            if (item.equals(settingsValue)) {
+                choiceBox.setValue(settingsValue);
+                return;
+            }
+        }
+        choiceBox.setValue(choiceBox.getItems().get(0));
     }
 
     private ObservableList<String> getTracksChoiceBoxList() {
@@ -193,7 +213,7 @@ public class MusicPlayerController implements Initializable {
         ObservableList<String> musicList = FXCollections.observableList(
                 Stream.of(files)
                         .filter(file ->
-                                !file.isDirectory() || file.getName().endsWith(".mp3")
+                                !file.isDirectory()
                         )
                         .map(File::getName)
                         .collect(Collectors.toList())
@@ -210,6 +230,8 @@ public class MusicPlayerController implements Initializable {
     private void initMusicButtonPane() {
         int z = 1;
 
+        String[][] keyBindArray = settings.getKeyBindArray();
+
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
 
@@ -220,14 +242,25 @@ public class MusicPlayerController implements Initializable {
                 label.setFont(Font.font(16));
 
                 Button b = new Button();
-                b.setText("-");
+                b.setText(keyBindArray[i][j]);
                 b.setStyle("-fx-background-color: #EBE8F9");
                 b.setMaxWidth(110.0);
                 b.setMaxHeight(100.0);
                 b.setFont(Font.font(16));
 
-                b.setOnAction(e ->
-                    b.setText(tracksChoiceBox.getValue())
+                int finalI = i;
+                int finalJ = j;
+                b.setOnAction(e -> {
+                            String newValue = tracksChoiceBox.getValue();
+                            b.setText(newValue);
+                            settings.setNewMusicButtonPaneState(newValue, finalJ, finalI);
+                            try {
+                                settings.saveSettings();
+                            } catch (SettingsException settingsException) {
+                                new ErrorAlertWindow("Failed to save Button state:\n" + settingsException.getMessage())
+                                        .showAndWait();
+                            }
+                        }
                 );
 
                 gridPaneElement.getChildren().add(label);

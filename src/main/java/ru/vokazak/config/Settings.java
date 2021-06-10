@@ -13,10 +13,25 @@ public class Settings implements Serializable {
     private final String FILE_PATH = "settings.out";
 
     //NzczOTU1NjcwODEzODM1MzQ2.X6QwYw.YG3KxPDfsvJoBjQDwlRayt5aQQU
-    ///F:/Music/DiscordSamples/
 
-    private String token = "";
-    private String musicFolder = "";
+    private String token;
+    private String musicFolder;
+    private String[][] keyBindArray = new String[3][3];
+    private String musicVoiceChannel;
+    private String musicTextChannel;
+
+    Settings() {
+        token = "";
+        musicFolder = "";
+        musicVoiceChannel = "";
+        musicTextChannel = "";
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                keyBindArray[i][j] = "-";
+            }
+        }
+    }
 
     public void saveSettings() throws SettingsException {
         try {
@@ -38,6 +53,9 @@ public class Settings implements Serializable {
             Settings settings = (Settings) objectInputStream.readObject();
             this.token = settings.getToken();
             this.musicFolder = settings.getMusicFolder();
+            this.keyBindArray = settings.getKeyBindArray();
+            this.musicTextChannel = settings.getMusicTextChannel();
+            this.musicVoiceChannel = settings.getMusicVoiceChannel();
 
             objectInputStream.close();
         } catch (IOException fileWasNotFoundExc) {
@@ -58,5 +76,10 @@ public class Settings implements Serializable {
             throw new SettingsException("Unable to load settings", ioException);
         }
     }
+
+    public void setNewMusicButtonPaneState(String newValue, int i, int j) {
+        keyBindArray[j][i] = newValue;
+    }
+
 
 }

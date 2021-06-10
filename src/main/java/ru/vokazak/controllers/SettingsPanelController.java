@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import lombok.RequiredArgsConstructor;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
+import ru.vokazak.alertWindows.ErrorAlertWindow;
 import ru.vokazak.config.Settings;
 import ru.vokazak.exceptions.SettingsException;
 import ru.vokazak.jda.JdaFactory;
@@ -56,16 +57,24 @@ public class SettingsPanelController implements Initializable {
     @FXML
     private Button applyMusicFolderButton;
     public void onMusicFolderButtonClicked() {
-        settings.setMusicFolder(musicFolderField.getText());
-        musicFolderField.setText(musicFolderField.getText());
+        String path = checkPathSyntax(musicFolderField.getText());
+
+        settings.setMusicFolder(path);
+        musicFolderField.setText(path);
 
         try {
             settings.saveSettings();
-        } catch (SettingsException ignored) {}
+        } catch (SettingsException e) {
+            new ErrorAlertWindow(e.getMessage()).showAndWait();
+        }
 
         messagePanelController.renew();
         musicPlayerController.renew();
+        musicFolderField.setText(settings.getMusicFolder());
     }
 
+    private String checkPathSyntax(String path) {
+        return (path.endsWith("/") ? path : path + '/');
+    }
 
 }

@@ -11,6 +11,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.springframework.stereotype.Component;
+import ru.vokazak.alertWindows.ErrorAlertWindow;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -93,11 +94,13 @@ public class PlayerManager {
             @Override
             public void noMatches() {
                 //channel.sendMessage("Nothing found by " + trackUrl).queue();
+                new ErrorAlertWindow("No track found by " + trackUrl).showAndWait();
             }
 
             @Override
             public void loadFailed(FriendlyException e) {
                 //channel.sendMessage("Could not play: " + e.getMessage()).queue();
+                new ErrorAlertWindow("No track found by " + trackUrl).showAndWait();
             }
         });
     }
@@ -105,14 +108,4 @@ public class PlayerManager {
     private void play(GuildMusicManager musicManager, AudioTrack track) {
         musicManager.scheduler.queue(track);
     }
-
-    /*
-    public static synchronized PlayerManager getInstance() {
-        if (playerManager == null) {
-            playerManager = new PlayerManager();
-        }
-        return playerManager;
-    }
-
-     */
 }
